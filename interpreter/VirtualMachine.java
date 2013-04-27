@@ -157,11 +157,15 @@ public class VirtualMachine {
             String name = fullName[2];
             
             code.execute(this);
-
-            System.out.print("\n" + code.toString());
-            //need to peek at top of stack for output for StoreCode & ReturnCode
-            if (name.equals("StoreCode") || name.equals("ReturnCode")) {
-                System.out.print("" + peekRunStack());
+            if (name.equals("DumpCode")) {
+                System.out.print("\n" + code.toString());
+                //need to peek at top of stack for output for StoreCode & ReturnCode
+                if (name.equals("StoreCode") || name.equals("ReturnCode")) {
+                    System.out.print("" + peekRunStack());
+                }
+                if (name.equals("CallCode"))  {
+                    System.out.print("(" + peekRunStack() + ")");
+                }
             }
             runStack.dump(); 
             pc++;

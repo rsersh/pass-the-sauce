@@ -28,9 +28,12 @@ public class CodeTable {
         codetable.put("CALL", "CallCode");
         codetable.put("DUMP", "DumpCode");
         codetable.put("FALSEBRANCH", "FalsebranchCode");
+        codetable.put("FORMAL", "FormalCode");
+        codetable.put("FUNCTION", "FunctionCode");
         codetable.put("GOTO", "GotoCode");
         codetable.put("HALT", "HaltCode");
         codetable.put("LABEL", "LabelCode");
+        codetable.put("LINE", "LineCode");
         codetable.put("LIT", "LitCode");
         codetable.put("LOAD", "LoadCode");
         codetable.put("POP", "PopCode");

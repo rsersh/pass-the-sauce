@@ -44,7 +44,7 @@ public class CallCode extends ByteCode {
     public String toString() {
         String stripped[] = funcName.split("<<");
         return "CALL " + funcName + "    " 
-                + stripped[0] + "(" + targetAddress + ")";
+                + stripped[0];
     }
       
 }

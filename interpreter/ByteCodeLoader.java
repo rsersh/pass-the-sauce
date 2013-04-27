@@ -23,8 +23,8 @@ import java.util.*;
 
 public class ByteCodeLoader {
     
-    private BufferedReader source;
-    private Program sourceProgram;
+    protected BufferedReader source;
+    protected Program sourceProgram;
     
     /**
      * @param programFile the source file

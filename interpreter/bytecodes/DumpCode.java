@@ -37,7 +37,7 @@ public class DumpCode extends ByteCode {
 
     @Override
     public String toString() {
-        return "DUMP " + dumpFlag;
+        return "DUMP " + dumpFlag + "\n";
     }
     
 }

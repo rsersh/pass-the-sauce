@@ -12,21 +12,42 @@
 
 package interpreter;
 
+import interpreter.debugger.DebugByteCodeLoader;
+import interpreter.debugger.DebugVM;
+import interpreter.debugger.SourceCodeLoader;
+import interpreter.debugger.SourceLineEntry;
 import java.io.*;
+import java.util.Vector;
 
 public class Interpreter {
 
         ByteCodeLoader bcl;
+        Boolean debugSet = false;
+        Vector<SourceLineEntry> sourceEntries;
         
         /**
-         * @param codeFile a *.x.cod file
+         * @param filename name of file without extension
          */
-        public Interpreter(String codeFile)  {
-            try {
-                    CodeTable.init();
-                    bcl = new ByteCodeLoader(codeFile);   
-            } catch (IOException e)  {
-                    System.out.println("****" + e);
+        public Interpreter(String filename, Boolean debugFlag)  {
+            debugSet = debugFlag;
+            
+            if (debugSet) {
+                try {
+                  CodeTable.init();
+                  bcl = new DebugByteCodeLoader(filename + ".x.cod"); 
+                  sourceEntries = (new SourceCodeLoader(filename+".x")).loadEntries();
+                  
+                } catch (IOException e)  {
+                  System.out.println("****" + e);
+                }
+            }
+            else {
+                try {
+                  CodeTable.init();
+                  bcl = new ByteCodeLoader(filename + ".x.cod");   
+                } catch (IOException e)  {
+                  System.out.println("****" + e);
+                }
             }
         }
         
@@ -34,17 +55,35 @@ public class Interpreter {
          * Creates a VirtualMachine object to execute the program.
          */
         public void run() {
+            
+            if (debugSet) {
+                Program program = bcl.loadCodes();
+                VirtualMachine vm = new DebugVM(program, sourceEntries);
+            }
+            
+            else {
                 Program program = bcl.loadCodes();
                 VirtualMachine vm = new VirtualMachine(program);
                 vm.executeProgram();
+            }
         }
     
         public static void main (String args[]) {
             if(args.length == 0)  {
-                    System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>");
+                    System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>"
+                            + "or java -d interpreter.Interpreter<file>");
                     System.exit(1);
             }
-            (new Interpreter(args[0])).run();
+            if(args.length==2) {
+                if(args[0].equals("-d")) {
+                    (new Interpreter(args[1], true)).run();
+                } else {
+                    System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>"
+                            + " or java -d interpreter.Interpreter<file>");
+                    System.exit(1);
+                }
+            }
+            (new Interpreter(args[0], false)).run();
         }
     
 }
