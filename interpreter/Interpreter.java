@@ -88,8 +88,9 @@ public class Interpreter {
                             + " or java -d interpreter.Interpreter<file>");
                     System.exit(1);
                 }
-            }
+            } else {
             (new Interpreter(args[0], false)).run();
-        }
+            }
+         }
     
 }
