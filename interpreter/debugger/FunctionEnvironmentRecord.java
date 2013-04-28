@@ -20,7 +20,7 @@ public class FunctionEnvironmentRecord {
     FunctionEnvironmentRecord() {
         symtab = new SymbolTable(); 
         symtab.beginScope();
-        System.out.println(dumpFER());
+        //System.out.println(dumpFER());
     }
     
     void setStartLine(int lineno) {

@@ -1,13 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package interpreter.bytecodes.debuggerbytecodes;
+
+import interpreter.VirtualMachine;
+import interpreter.debugger.DebugVM;
 
 /**
  *
- * @author rsersh
+ * @author Rachel Sershon
  */
 public class LitCode extends interpreter.bytecodes.LitCode {
+    
+    public void execute(DebugVM vm) {
+        super.execute(vm);
+        int offsetLocation = vm.getStackSize()-1;
+        vm.addPair(id, offsetLocation);
+    }
+    
     
 }

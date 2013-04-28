@@ -15,7 +15,7 @@ import java.util.Vector;
 public class PopCode extends ByteCode {
 
     private String name = "PopCode";
-    private int levels;
+    public int levels;
     
     @Override
     public void init(Vector<String> args) {

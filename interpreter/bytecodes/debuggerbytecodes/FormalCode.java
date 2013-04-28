@@ -1,36 +1,41 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package interpreter.bytecodes.debuggerbytecodes;
 
 import interpreter.VirtualMachine;
+import interpreter.debugger.DebugVM;
 import java.util.Vector;
 
 /**
  *
- * @author rsersh
+ * @author Rachel Sershon
  */
 public class FormalCode extends interpreter.bytecodes.ByteCode {
 
+    String id;
+    int offset;
+    
     @Override
     public String getArgs() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return id + " " + offset;
     }
 
     @Override
     public void init(Vector<String> args) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        id = args.get(0);
+        offset = Integer.parseInt(args.get(1));
     }
 
     @Override
     public void execute(VirtualMachine vm) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        execute((DebugVM) vm);
+    }
+    
+    public void execute(DebugVM vm) {
+        vm.addPair(id, offset);
     }
 
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "FORMAL " + id + " " + offset;
     }
     
 }

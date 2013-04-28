@@ -23,8 +23,8 @@ import java.util.*;
 
 public class ByteCodeLoader {
     
-    protected BufferedReader source;
-    protected Program sourceProgram;
+    public BufferedReader source;
+    public Program sourceProgram;
     
     /**
      * @param programFile the source file
@@ -59,11 +59,13 @@ public class ByteCodeLoader {
                 while (line.hasMoreTokens()) {    
                     args.add(line.nextToken());   
                 }
-                String codeClass = CodeTable.get(code);
-            
+                
+                //String codeClass = CodeTable.get(code);
+                String codeClass = getCodeClass(code);
+                
             try {
                bytecode = 
-                 (ByteCode)(Class.forName("interpreter.bytecodes."+codeClass).newInstance());
+                 (ByteCode)(Class.forName(codeClass).newInstance());
                bytecode.init(args);
                sourceProgram.addCode(bytecode);
                 
@@ -78,5 +80,10 @@ public class ByteCodeLoader {
 
         sourceProgram.resolveCodes();
         return sourceProgram;
+    }
+    
+    String getCodeClass(String code) {
+        String codeClass = CodeTable.get(code);
+        return "interpreter.bytecodes." + codeClass;
     }
 }

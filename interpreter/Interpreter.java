@@ -16,6 +16,7 @@ import interpreter.debugger.DebugByteCodeLoader;
 import interpreter.debugger.DebugVM;
 import interpreter.debugger.SourceCodeLoader;
 import interpreter.debugger.SourceLineEntry;
+import interpreter.debugger.ui.DebugUI;
 import java.io.*;
 import java.util.Vector;
 
@@ -34,8 +35,10 @@ public class Interpreter {
             if (debugSet) {
                 try {
                   CodeTable.init();
-                  bcl = new DebugByteCodeLoader(filename + ".x.cod"); 
-                  sourceEntries = (new SourceCodeLoader(filename+".x")).loadEntries();
+                  String codeFileName = filename + ".x.cod";
+                  bcl = new DebugByteCodeLoader(codeFileName);
+                  String sourceFileName = filename + ".x";
+                  sourceEntries = (new SourceCodeLoader(sourceFileName)).loadEntries();
                   
                 } catch (IOException e)  {
                   System.out.println("****" + e);
@@ -55,10 +58,13 @@ public class Interpreter {
          * Creates a VirtualMachine object to execute the program.
          */
         public void run() {
-            
+            //Program program = bcl.loadCodes();
             if (debugSet) {
-                Program program = bcl.loadCodes();
+                Program program = ((DebugByteCodeLoader)bcl).loadCodes();
                 VirtualMachine vm = new DebugVM(program, sourceEntries);
+                
+                DebugUI ui = new DebugUI((DebugVM)vm);
+                ui.execute();
             }
             
             else {

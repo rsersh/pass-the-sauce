@@ -14,8 +14,8 @@ import java.util.Vector;
 public class LitCode extends ByteCode {
 
     private String name = "LitCode";
-    private int value;
-    private String id;
+    public int value;
+    public String id;
     
     @Override
     public void init(Vector<String> args) {

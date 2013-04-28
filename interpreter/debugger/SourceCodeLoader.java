@@ -67,7 +67,7 @@ public class SourceCodeLoader {
     public void printSourceEntries() {
         int size = sourceEntries.size();
         for (int i = 1; i < size; i++) {
-            System.out.println("Line " + i + ":  " + getSourceLine(i));
+            System.out.println("" + i + ".  " + getSourceLine(i));
         }
     }
 

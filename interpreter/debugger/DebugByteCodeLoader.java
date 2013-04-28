@@ -3,6 +3,7 @@ package interpreter.debugger;
 import interpreter.CodeTable;
 import interpreter.Program;
 import interpreter.bytecodes.ByteCode;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -13,7 +14,8 @@ import java.util.Vector;
  */
 public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
     
-    Program sourceProgram;
+    //Program sourceProgram;
+    //public BufferedReader source;
     
     public DebugByteCodeLoader(String filename) throws IOException {
             super(filename);     
@@ -29,6 +31,16 @@ public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
         return isForDebugger;
     }
     
+    String getCodeClass(String code) {
+        String codeClass = CodeTable.get(code);
+        if (isDebuggerByteCode(codeClass)) {
+            return "interpreter.bytecodes.debuggerbytecodes." + codeClass;
+        }
+        
+        return "interpreter.bytecodes." + codeClass;
+    }
+    
+    /*
     public Program loadCodes() {
         sourceProgram = new Program();
         String code;
@@ -48,7 +60,7 @@ public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
                 if (isDebuggerByteCode(codeClass)) {
                   try {
                     bytecode = 
-                     (ByteCode)(Class.forName("interpreter.bytecodes.debuggerbytecodes"
+                     (ByteCode)(Class.forName("interpreter.bytecodes.debuggerbytecodes."
                           +codeClass).newInstance());
                     bytecode.init(args);
                     sourceProgram.addCode(bytecode);
@@ -75,7 +87,7 @@ public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
         sourceProgram.resolveCodes();
         return sourceProgram;
     }
-    
+    */
     
     
 }

@@ -15,7 +15,7 @@ public class VirtualMachine {
     RunTimeStack runStack;
     int pc;
     Stack<Integer> returnAddrs;
-    boolean isRunning;
+    public boolean isRunning;
     Program program;
 
     /**

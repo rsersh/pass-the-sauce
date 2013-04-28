@@ -1,13 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package interpreter.bytecodes.debuggerbytecodes;
+
+import interpreter.VirtualMachine;
+import interpreter.debugger.DebugVM;
+//import interpreter.bytecodes.PopCode;
 
 /**
  *
- * @author rsersh
+ * @author Rachel Sershon
  */
 public class PopCode extends interpreter.bytecodes.PopCode {
     
+    //need to pop FER
+    
+    public void execute(DebugVM vm) {
+        super.execute(vm);
+        vm.popPairs(levels);
+    }
 }
