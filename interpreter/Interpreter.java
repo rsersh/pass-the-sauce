@@ -23,6 +23,7 @@ import java.util.Vector;
 public class Interpreter {
 
         ByteCodeLoader bcl;
+        DebugByteCodeLoader dbcl;
         Boolean debugSet = false;
         Vector<SourceLineEntry> sourceEntries;
         
@@ -36,7 +37,7 @@ public class Interpreter {
                 try {
                   CodeTable.init();
                   String codeFileName = filename + ".x.cod";
-                  bcl = new DebugByteCodeLoader(codeFileName);
+                  dbcl = new DebugByteCodeLoader(codeFileName);
                   String sourceFileName = filename + ".x";
                   sourceEntries = (new SourceCodeLoader(sourceFileName)).loadEntries();
                   
@@ -47,7 +48,8 @@ public class Interpreter {
             else {
                 try {
                   CodeTable.init();
-                  bcl = new ByteCodeLoader(filename + ".x.cod");   
+                  String codeName = filename + ".x.cod";
+                  bcl = new ByteCodeLoader(codeName);   
                 } catch (IOException e)  {
                   System.out.println("****" + e);
                 }
@@ -60,7 +62,7 @@ public class Interpreter {
         public void run() {
             //Program program = bcl.loadCodes();
             if (debugSet) {
-                Program program = ((DebugByteCodeLoader)bcl).loadCodes();
+                Program program = dbcl.loadCodes();
                 VirtualMachine vm = new DebugVM(program, sourceEntries);
                 
                 //DebugUI ui = new DebugUI();
@@ -80,15 +82,15 @@ public class Interpreter {
                     System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>"
                             + "or java -d interpreter.Interpreter<file>");
                     System.exit(1);
-            }
-            if(args.length==2) {
-                if(args[0].equals("-d")) {
-                    (new Interpreter(args[1], true)).run();
-                } else {
-                    System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>"
+            } else if (args.length==2)  {
+               
+                   if(args[0].equals("-d")) {
+                      (new Interpreter(args[1], true)).run();
+                   } else {
+                     System.out.println("***Incorrect usage, try: java interpreter.Interpreter<file>"
                             + " or java -d interpreter.Interpreter<file>");
-                    System.exit(1);
-                }
+                     System.exit(1);
+                   }
             } else {
             (new Interpreter(args[0], false)).run();
             }

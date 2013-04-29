@@ -82,7 +82,7 @@ public class ByteCodeLoader {
         return sourceProgram;
     }
     
-    String getCodeClass(String code) {
+    public String getCodeClass(String code) {
         String codeClass = CodeTable.get(code);
         return "interpreter.bytecodes." + codeClass;
     }

@@ -28,11 +28,13 @@ public class DebugUI {
                 + " s 4 8 10");
         System.out.println("x #(s)\tclear breakpoint at line#");
         System.out.println("\t- separate multiple line#s with a single space:"
-                + "x 4 8 10");
+                + " x 4 8 10");
+        System.out.println("l\tlist lines that have breakpoints set");
         System.out.println("f\tdisplay current function");
         System.out.println("c\tcontinue execution");
         System.out.println("q\tquit execution");
         System.out.println("v\tdisplay variable(s)");
+        System.out.println("*********************");
         //promptAndProcess();
     }
     
@@ -70,7 +72,10 @@ public class DebugUI {
                   displayVariables();
               } else if (command[0].equals("?")) {
                   displayMenu();
-              } else if (command[0].equals("s")) {
+              } else if (command[0].equals("l")) {
+                  showBreakList();
+              } 
+              else if (command[0].equals("s")) {
                   if (command.length < 2) {
                       System.out.println("ERROR: Insufficient input.");
                       System.out.println();
@@ -96,6 +101,10 @@ public class DebugUI {
             System.exit(1);
         }
         
+    }
+    
+    static void showBreakList() {
+        System.out.println("Breaks are set at lines: " + dvm.listBreaks());
     }
 
     static void setBreakPoint (String[] lineNums) {

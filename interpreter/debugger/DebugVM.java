@@ -14,11 +14,13 @@ public class DebugVM extends interpreter.VirtualMachine {
     //int currentLine;
     Stack<FunctionEnvironmentRecord> environmentStack;
     Vector<SourceLineEntry> sourceByLine;
+    Stack<Integer> breakTracker;
     
     public DebugVM(Program aProgram, Vector<SourceLineEntry> source) {
         super(aProgram);
         environmentStack = new Stack<FunctionEnvironmentRecord>();
         sourceByLine = source;
+        breakTracker = new Stack<Integer>();
         
         //setup environmentStack with main
         FunctionEnvironmentRecord main = new FunctionEnvironmentRecord();
@@ -31,32 +33,55 @@ public class DebugVM extends interpreter.VirtualMachine {
         isRunning = true;
     }
     
-    /*
-    public Boolean isRunning() {
-        return super.isRunning();
+    public Boolean okToSetBreak(String line) {
+        Boolean set = false;
+        if (line.contains("if") || line.contains("while") 
+         || line.contains("int") || line.contains("boolean")
+         || line.contains("=") || line.contains("{")
+         || line.contains("return")){
+            set = true;
+        }
+        return set;
     }
-    */
     
     public void setBreak(int lineNum) {
         //check for proper conditions (LINE BC)
-        SourceLineEntry entry = sourceByLine.get(lineNum);
-        entry.setBreak(Boolean.TRUE);
-        sourceByLine.set(lineNum, entry);
+        if (lineNum <= sourceByLine.size()-1) {
+            SourceLineEntry entry = sourceByLine.get(lineNum);
+            String sourceLine = entry.getLine();
+            if (okToSetBreak(sourceLine)) {
+                entry.setBreak(Boolean.TRUE);
+                sourceByLine.set(lineNum, entry);
+                Integer lineno = new Integer(lineNum);
+                breakTracker.push(lineNum);
+            } else {
+                System.out.println("ERROR: Cannot set break at line: " + lineNum);
+            }
+        } else {
+            System.out.println("ERROR: Line is out of range. Cannot set break.");
+        }
     }
     
     public void clearBreak(int lineNum) {
         SourceLineEntry entry = sourceByLine.get(lineNum);
         entry.setBreak(Boolean.FALSE);
         sourceByLine.set(lineNum, entry);
+        Integer line = new Integer(lineNum);
+        breakTracker.remove(line);
     }
     
-    /*
-    public void continueExecution() {
-        //isRunning = true;
-        super.executeProgram();
+    public String listBreaks() {
+        String breakList = "";
+        for (int i = 0; i < breakTracker.size(); i++) {
+            String number = (breakTracker.pop()).toString();
+            breakList += number;
+            if (i < breakTracker.size()) {
+                breakList += ", ";
+            }
+        }
+        return breakList;
     }
-    */
-    
+     
     public void setCurrentLine(int lineno) {
         //currentLine = lineno;
         FunctionEnvironmentRecord fer = environmentStack.pop();
@@ -102,7 +127,7 @@ public class DebugVM extends interpreter.VirtualMachine {
         if (start < 0) {
             functionOutput += "******" + name + "******";
         } else {
-            for(int i = start; i < end; i++) {
+            for(int i = start; i <= end; i++) {
                 functionOutput += "" + i + ".  " 
                         + (sourceByLine.get(i)).getLine();
                 if (i == current) {

@@ -31,8 +31,9 @@ public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
         return isForDebugger;
     }
     
-    String getCodeClass(String code) {
+    public String getCodeClass(String code) {
         String codeClass = CodeTable.get(code);
+        
         if (isDebuggerByteCode(codeClass)) {
             return "interpreter.bytecodes.debuggerbytecodes." + codeClass;
         }
