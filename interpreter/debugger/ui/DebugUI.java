@@ -16,13 +16,10 @@ public class DebugUI {
     static DebugVM dvm;
     
     
-    public DebugUI(DebugVM debugVM) {
-        dvm = debugVM;
-        //displayMenu();
-    }
+    private DebugUI() {}
    
     
-    void displayMenu() {
+    static void displayMenu() {
         System.out.println("Help Menu of Commands");
         System.out.println("*********************");
         System.out.println("?\thelp");
@@ -39,62 +36,69 @@ public class DebugUI {
         //promptAndProcess();
     }
     
-    void promptAndProcess() {
+    public static void promptAndProcess(DebugVM vm) {
+        dvm = vm;
         BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Type ? for help");
-        System.out.println("> ");
-        try {
-            String line = buff.readLine();
-            String[] command = line.split(" ");
+        displayMenu();
+        System.out.println();
+        displayFunction();
 
-            if (command[0].equals("c")) {
-                dvm.executeProgram();
-            } else if (command[0].equals("q")) {
-                dvm.quit();
-            } else if (command[0].equals("f")) {
-                //System.out.println("display current function");
-                displayFunction();
-            } else if (command[0].equals("v")) {
-                //System.out.println("Display variables");
-                displayVariables();
-            } else if (command[0].equals("?")) {
-                displayMenu();
-            } else {
-                if (command.length < 2) {
-                   System.out.println("ERROR: Insufficient input");
-                   displayMenu();
-                } 
-                if (command[0].equals("s")) {
-                    setBreakPoint(command);
-                } //command[0] should equal x
-                if (command[0].equals("x")) {
-                    clearBreakPoint(command);
-                } else {
-                    System.out.println("ERROR: Problem processing command");
-                    displayMenu();
-                }
-            }     
+        dvm.setToRun();
+        //System.out.println("Is the VM set to run?  " + dvm.isRunning());
+        try {
+            
+            while (dvm.isRunning()) {
+        
+               System.out.println("Type ? for help");
+               System.out.println("> ");    
+        
+               String line = buff.readLine();
+               String[] command = line.split(" ");
+               //process command
+               /*
+               int size = command.length;
+               for (int i = 0; i < size; i++) {
+                   System.out.println("Command[" + i + "] = " + command[i]);
+               }*/
+               if (command[0].equals("c")) {
+                  dvm.executeProgram();
+               } else if (command[0].equals("q")) {
+                  dvm.quit();
+               } else if (command[0].equals("f")) {
+                  displayFunction();
+               } else if (command[0].equals("v")) {
+                  displayVariables();
+              } else if (command[0].equals("?")) {
+                  displayMenu();
+              } else if (command[0].equals("s")) {
+                  if (command.length < 2) {
+                      System.out.println("ERROR: Insufficient input.");
+                      System.out.println();
+                      displayMenu();
+                  } else {
+                      setBreakPoint(command);
+                  }
+              } else if (command[0].equals("x")) {
+                  if (command.length < 2) {
+                      System.out.println("ERROR: Insufficient input.");
+                      System.out.println();
+                      displayMenu();
+                  } else {
+                      clearBreakPoint(command);
+                  }
+              } else {
+                  System.out.println("ERROR: Problem reading input. Try again.");
+                  displayMenu();
+              } 
+            }
         } catch (IOException e) {
             System.out.println("ERROR: Problem reading user input.");
             System.exit(1);
         }
         
     }
-   
-    public void execute() {
-        
-        displayFunction();
-        while (dvm.isRunning()) {
-            promptAndProcess();
-        }
-        
-    }
-    /*
-    executeVM() {
-    }
-    */
 
-    void setBreakPoint (String[] lineNums) {
+    static void setBreakPoint (String[] lineNums) {
         int size = lineNums.length;
         for (int i = 1; i < size; i++) {
             int number = Integer.parseInt(lineNums[i]);
@@ -102,7 +106,7 @@ public class DebugUI {
         }
     }
     
-    void clearBreakPoint (String[] lineNums) {
+    static void clearBreakPoint (String[] lineNums) {
         int size = lineNums.length;
         for (int i = 1; i < size; i++) {
             int number = Integer.parseInt(lineNums[i]);
@@ -110,11 +114,11 @@ public class DebugUI {
         }
     }
     
-    void displayFunction() {
-        System.out.println(dvm.displayFunc());
+    static void displayFunction() {
+        System.out.println("\n" + dvm.displayFunc());
     }
     
-    void displayVariables() {
+    static void displayVariables() {
         System.out.println(dvm.displayVars());
     }
 }

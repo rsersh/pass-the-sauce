@@ -27,9 +27,15 @@ public class DebugVM extends interpreter.VirtualMachine {
         environmentStack.add(main);
     }
     
-    public Boolean isRunning() {
-        return isRunning;
+    public void setToRun() {
+        isRunning = true;
     }
+    
+    /*
+    public Boolean isRunning() {
+        return super.isRunning();
+    }
+    */
     
     public void setBreak(int lineNum) {
         //check for proper conditions (LINE BC)

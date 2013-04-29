@@ -140,6 +140,10 @@ public class VirtualMachine {
         return runStack.getStackCounter();
     }
     
+    public Boolean isRunning() {
+        return isRunning;
+    }
+    
     /**
      * Given by Prof. Levine, this function uses a Fetch/Execute Cycle
      * Design Pattern.  Dynamic binding is used to execute each bytecode

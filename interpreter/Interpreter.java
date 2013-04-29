@@ -63,8 +63,9 @@ public class Interpreter {
                 Program program = ((DebugByteCodeLoader)bcl).loadCodes();
                 VirtualMachine vm = new DebugVM(program, sourceEntries);
                 
-                DebugUI ui = new DebugUI((DebugVM)vm);
-                ui.execute();
+                //DebugUI ui = new DebugUI();
+                //ui.promptAndProcess((DebugVM) vm);
+                DebugUI.promptAndProcess((DebugVM) vm);
             }
             
             else {
