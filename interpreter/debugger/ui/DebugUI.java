@@ -63,7 +63,8 @@ public class DebugUI {
                    System.out.println("Command[" + i + "] = " + command[i]);
                }*/
                if (command[0].equals("c")) {
-                  dvm.executeProgram();
+                  continueExecution();
+                   //dvm.executeProgram();
                } else if (command[0].equals("q")) {
                   dvm.quit();
                } else if (command[0].equals("f")) {
@@ -74,7 +75,13 @@ public class DebugUI {
                   displayMenu();
               } else if (command[0].equals("l")) {
                   showBreakList();
+              } else if (command[0].equals("i")) {
+                  stepIn();
+              }
+              else if (command[0].equals("o")) {
+                  continueExecution();
               } 
+              
               else if (command[0].equals("s")) {
                   if (command.length < 2) {
                       System.out.println("ERROR: Insufficient input.");
@@ -121,6 +128,14 @@ public class DebugUI {
             int number = Integer.parseInt(lineNums[i]);
             dvm.clearBreak(number);
         }
+    }
+    
+    static void continueExecution() {
+        dvm.continueExecuting();
+    }
+    
+    static void stepIn() {
+        dvm.stepIn();
     }
     
     static void displayFunction() {

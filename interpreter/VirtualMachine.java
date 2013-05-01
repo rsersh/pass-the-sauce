@@ -12,11 +12,11 @@ import java.util.Stack;
  */
 public class VirtualMachine {
     
-    RunTimeStack runStack;
-    int pc;
-    Stack<Integer> returnAddrs;
-    public boolean isRunning;
-    Program program;
+    protected RunTimeStack runStack;
+    protected int pc;
+    protected Stack<Integer> returnAddrs;
+    protected boolean isRunning;
+    protected Program program;
 
     /**
      * @param program  Program object loaded with bytecodes containing all information
