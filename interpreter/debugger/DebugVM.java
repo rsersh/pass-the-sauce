@@ -3,6 +3,8 @@ package interpreter.debugger;
 import interpreter.Program;
 import interpreter.RunTimeStack;
 import interpreter.bytecodes.ByteCode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -15,14 +17,19 @@ public class DebugVM extends interpreter.VirtualMachine {
     //int currentLine;
     Stack<FunctionEnvironmentRecord> environmentStack;
     Vector<SourceLineEntry> sourceByLine;
-    Stack<Integer> breakTracker;
-    String command;
+    ArrayList<Integer> breakTracker;
+    ArrayList<Integer> lineCodeTracker;
+    String debugCommand;
     
     public DebugVM(Program aProgram, Vector<SourceLineEntry> source) {
         super(aProgram);
+        pc = 0;
+        runStack = new RunTimeStack();
+        returnAddrs = new Stack<Integer>();
+        isRunning = true;
         sourceByLine = source;
         environmentStack = new Stack<FunctionEnvironmentRecord>();
-        breakTracker = new Stack<Integer>();
+        breakTracker = new ArrayList<Integer>();
         //setup environmentStack with main
         FunctionEnvironmentRecord main = new FunctionEnvironmentRecord();
         main.setFunction("main", 1, sourceByLine.size()-1);
@@ -31,19 +38,37 @@ public class DebugVM extends interpreter.VirtualMachine {
     }
     
     public void executeProgram() {
-        pc = 0;
-        runStack = new RunTimeStack();
-        returnAddrs = new Stack<Integer>();
-        isRunning = true;
+
         int environmentStackSize = environmentStack.size();
         
         while (conditionCheck(environmentStackSize) && isRunning) {  //and checkBreak is false
             ByteCode code = program.getCode(pc);
             String n = code.getClass().getName();
             String[] fullName = n.split("\\.");
-            String name = fullName[2];
+            String name;
+            if (fullName.length == 4) {
+                name = fullName[3]; 
+            } else {
+                name = fullName[2];
+            }
+            /*
+            if (name.equals("LineCode")) {
+                String lineno = code.getArgs();
+                int temp = Integer.parseInt(lineno);
+                Integer lineNumber = new Integer(temp);
+                lineCodeTracker.add(lineNumber);
+            }
+            */
+            
+            //System.out.println("Name of code is: " + name);
+            /*
+            if (name.matches("ReadCode")) {
+                System.out.println("Enter Integer: ");
+            } 
+            */
             
             code.execute(this);
+            
             if (name.equals("DumpCode")) {
                 System.out.print("\n" + code.toString());
                 //need to peek at top of stack for output for StoreCode & ReturnCode
@@ -53,8 +78,10 @@ public class DebugVM extends interpreter.VirtualMachine {
                 if (name.equals("CallCode"))  {
                     System.out.print("(" + peekRunStack() + ")");
                 }
+            
             }
             runStack.dump(); 
+            
             pc++;
         }  //where to reset command?
         System.out.println();
@@ -65,11 +92,18 @@ public class DebugVM extends interpreter.VirtualMachine {
     }
     
     public void setCommand(String comm) {
-        command = comm;
+        debugCommand = comm;
     }
     
-    public Boolean okToSetBreak(String line) {
+    public Boolean okToSetBreak (String line) {//(int line) {//(String line) {
+        
         Boolean set = false;
+        /*
+        Integer lineNumber = new Integer(line);
+        if (lineCodeTracker.contains(lineNumber)) {
+            set = true;
+        }
+        */
         if (line.contains("if") || line.contains("while") 
          || line.contains("int") || line.contains("boolean")
          || line.contains("=") || line.contains("{")
@@ -80,21 +114,23 @@ public class DebugVM extends interpreter.VirtualMachine {
     }
     
     public Boolean conditionCheck(int size) {
-        if (command.equals("continue")) {
-            return (!isBreak(getCurrentLine()) 
-                    || size == environmentStack.size());
-        } else if (command.equals("out")) {
-            return (!isBreak(getCurrentLine())
+        Boolean check = false;
+        if (debugCommand.equals("continue")) {
+            check = (!isBreak(getCurrentLine()));
+                    //|| size == environmentStack.size());
+        } else if (debugCommand.equals("out")) {
+            check =  (!isBreak(getCurrentLine())
                     || size >= environmentStack.size());
-        } else if (command.equals("in")) {
-            return true;
+        } else if (debugCommand.equals("in")) {
+            //check = true;
         }
         
-        else { return true;  }
+        return check; 
     }
     
     public void continueExecuting() {
         setCommand("continue");
+        executeProgram();
     }
     
     public void stepOut() {
@@ -110,11 +146,11 @@ public class DebugVM extends interpreter.VirtualMachine {
         if (lineNum <= sourceByLine.size()-1) {
             SourceLineEntry entry = sourceByLine.get(lineNum);
             String sourceLine = entry.getLine();
-            if (okToSetBreak(sourceLine)) {
+            if ( okToSetBreak(sourceLine)) { //(lineNum) ) {//(sourceLine)) {
                 entry.setBreak(Boolean.TRUE);
                 sourceByLine.set(lineNum, entry);
                 Integer lineno = new Integer(lineNum);
-                breakTracker.push(lineNum);
+                breakTracker.add(lineno);
             } else {
                 System.out.println("ERROR: Cannot set break at line: " + lineNum);
             }
@@ -131,10 +167,10 @@ public class DebugVM extends interpreter.VirtualMachine {
         breakTracker.remove(line);
     }
     
-    public String listBreaks() {
+    public String showBreaks() {
         String breakList = "";
         for (int i = 0; i < breakTracker.size(); i++) {
-            String number = (breakTracker.pop()).toString();
+            String number = breakTracker.get(i).toString();
             breakList += number;
             if (i < breakTracker.size()) {
                 breakList += ", ";
@@ -150,9 +186,15 @@ public class DebugVM extends interpreter.VirtualMachine {
      
     public void setCurrentLine(int lineno) {
         //currentLine = lineno;
-        FunctionEnvironmentRecord fer = environmentStack.pop();
-        fer.setCurrentLine(lineno);
-        environmentStack.push(fer);
+        if (lineno >= 1) {// && environmentStack.size() == runStack.framePointersNumber()) {
+            FunctionEnvironmentRecord fer = environmentStack.pop();
+            //int lastIndex = environmentStack.size() - 1;
+            //FunctionEnvironmentRecord fer = environmentStack.get(lastIndex);
+            fer.setCurrentLine(lineno);
+            environmentStack.push(fer);
+            //environmentStack.removeElementAt(lastIndex);
+            
+        }
     }
     
     public int getCurrentLine() {
@@ -167,7 +209,7 @@ public class DebugVM extends interpreter.VirtualMachine {
     public void addFER(String name, int startLine, int endLine) {
         FunctionEnvironmentRecord fer = new FunctionEnvironmentRecord();
         fer.setFunction(name, startLine, endLine);
-        environmentStack.add(fer);
+        environmentStack.push(fer);
     }
     
     public void addPair(String id, int offset) {

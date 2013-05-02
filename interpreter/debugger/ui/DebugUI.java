@@ -79,6 +79,7 @@ public class DebugUI {
                   stepIn();
               }
               else if (command[0].equals("o")) {
+                  //step out and then
                   continueExecution();
               } 
               
@@ -111,7 +112,7 @@ public class DebugUI {
     }
     
     static void showBreakList() {
-        System.out.println("Breaks are set at lines: " + dvm.listBreaks());
+        System.out.println("Breaks are set at lines: " + dvm.showBreaks());
     }
 
     static void setBreakPoint (String[] lineNums) {

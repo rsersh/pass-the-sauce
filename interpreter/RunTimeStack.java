@@ -161,4 +161,8 @@ public class RunTimeStack {
     public int getSize() {
         return runStack.size();
     }
+    
+    public int framePointersNumber()  {
+        return framePointers.size();
+    }
 }
