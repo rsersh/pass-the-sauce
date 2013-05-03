@@ -30,6 +30,7 @@ public class DebugUI {
         System.out.println("\t- separate multiple line#s with a single space:"
                 + " x 4 8 10");
         System.out.println("l\tlist lines that have breakpoints set");
+        System.out.println("o\tstep out of the current function");
         System.out.println("f\tdisplay current function");
         System.out.println("c\tcontinue execution");
         System.out.println("q\tquit execution");
@@ -80,7 +81,7 @@ public class DebugUI {
               }
               else if (command[0].equals("o")) {
                   //step out and then
-                  continueExecution();
+                  stepOut();;
               } 
               
               else if (command[0].equals("s")) {
@@ -137,6 +138,10 @@ public class DebugUI {
     
     static void stepIn() {
         dvm.stepIn();
+    }
+    
+    static void stepOut() {
+        dvm.stepOut();
     }
     
     static void displayFunction() {

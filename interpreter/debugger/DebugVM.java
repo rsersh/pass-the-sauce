@@ -84,6 +84,7 @@ public class DebugVM extends interpreter.VirtualMachine {
             
             pc++;
         }  //where to reset command?
+        debugCommand = null;
         System.out.println();
     }
     
@@ -116,11 +117,14 @@ public class DebugVM extends interpreter.VirtualMachine {
     public Boolean conditionCheck(int size) {
         Boolean check = false;
         if (debugCommand.equals("continue")) {
-            check = (!isBreak(getCurrentLine()));
-                    //|| size == environmentStack.size());
+            check = (!isBreak(getCurrentLine())
+                    || size == environmentStack.size());
         } else if (debugCommand.equals("out")) {
-            check =  (!isBreak(getCurrentLine())
-                    || size >= environmentStack.size());
+            check = environmentStack.size() >= size;
+            if (isBreak(getCurrentLine())) {
+                check = false;
+            }
+                //    && environmentStack.size() >= size); //< environmentStack.size());
         } else if (debugCommand.equals("in")) {
             //check = true;
         }
@@ -135,10 +139,12 @@ public class DebugVM extends interpreter.VirtualMachine {
     
     public void stepOut() {
         setCommand("out");
+        executeProgram();
     }
     
     public void stepIn() {
         setCommand("in");
+        //executeProgram();
     }
     
     public void setBreak(int lineNum) {
@@ -169,12 +175,16 @@ public class DebugVM extends interpreter.VirtualMachine {
     
     public String showBreaks() {
         String breakList = "";
-        for (int i = 0; i < breakTracker.size(); i++) {
-            String number = breakTracker.get(i).toString();
-            breakList += number;
-            if (i < breakTracker.size()) {
-                breakList += ", ";
+        if (!breakTracker.isEmpty()) {
+            for (int i = 0; i < breakTracker.size(); i++) {
+                String number = breakTracker.get(i).toString();
+                breakList += number;
+                if (i < breakTracker.size()-1) {
+                    breakList += ", ";
+                }
             }
+        } else {
+            breakList += "No Breaks have been set at this time.";            
         }
         return breakList;
     }
