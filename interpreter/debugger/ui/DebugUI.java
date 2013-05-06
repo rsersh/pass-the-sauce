@@ -90,7 +90,8 @@ public class DebugUI {
                       System.out.println();
                       displayMenu();
                   } else {
-                      setBreakPoint(command);
+                      String linesSet = setBreakPoint(command);
+                      System.out.println(linesSet);
                   }
               } else if (command[0].equals("x")) {
                   if (command.length < 2) {
@@ -98,7 +99,8 @@ public class DebugUI {
                       System.out.println();
                       displayMenu();
                   } else {
-                      clearBreakPoint(command);
+                      String linesCleared = clearBreakPoint(command);
+                      System.out.println("Breakpoints cleared at: " + linesCleared);
                   }
               } else {
                   System.out.println("ERROR: Problem reading input. Try again.");
@@ -116,20 +118,33 @@ public class DebugUI {
         System.out.println("Breaks are set at lines: " + dvm.showBreaks());
     }
 
-    static void setBreakPoint (String[] lineNums) {
+    static String setBreakPoint (String[] lineNums) {
         int size = lineNums.length;
+        String returnString = "";
         for (int i = 1; i < size; i++) {
             int number = Integer.parseInt(lineNums[i]);
-            dvm.setBreak(number);
+            returnString = dvm.setBreak(number);
         }
-    }
+        if (!returnString.isEmpty()) {
+            return "Breakpoint(s) set at: " + dvm.showBreaks();
+        } else {
+            return "No breakpoints set.";
+        }
+     }
     
-    static void clearBreakPoint (String[] lineNums) {
+    static String clearBreakPoint (String[] lineNums) {
         int size = lineNums.length;
+        String linesCleared = "";
         for (int i = 1; i < size; i++) {
             int number = Integer.parseInt(lineNums[i]);
-            dvm.clearBreak(number);
+
+            if (dvm.clearBreak(number)) {
+                linesCleared += lineNums[i] + " ";
+            } else {
+                linesCleared += "Error clearing breakpoint on line " + lineNums[i];
+            }
         }
+        return linesCleared;
     }
     
     static void continueExecution() {

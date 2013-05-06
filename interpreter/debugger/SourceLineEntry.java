@@ -14,8 +14,9 @@ public class SourceLineEntry {
         sourceLine = line;
     }
     
-    void setBreak(Boolean breakFlag) {
+    Boolean setBreak(Boolean breakFlag) {
         isBreakSet = breakFlag;
+        return true;
     }
     
     String getLine() {

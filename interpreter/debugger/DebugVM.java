@@ -20,6 +20,7 @@ public class DebugVM extends interpreter.VirtualMachine {
     ArrayList<Integer> breakTracker;
     ArrayList<Integer> lineCodeTracker;
     String debugCommand;
+    Boolean stepOutIsPending;
     
     public DebugVM(Program aProgram, Vector<SourceLineEntry> source) {
         super(aProgram);
@@ -121,7 +122,7 @@ public class DebugVM extends interpreter.VirtualMachine {
                     || size == environmentStack.size());
         } else if (debugCommand.equals("out")) {
             check = environmentStack.size() >= size;
-            if (isBreak(getCurrentLine())) {
+            if (isBreak(getCurrentLine()) && stepOutIsPending) {
                 check = false;
             }
                 //    && environmentStack.size() >= size); //< environmentStack.size());
@@ -139,38 +140,49 @@ public class DebugVM extends interpreter.VirtualMachine {
     
     public void stepOut() {
         setCommand("out");
+        stepOutIsPending = true;
         executeProgram();
     }
     
     public void stepIn() {
         setCommand("in");
-        //executeProgram();
+        executeProgram();
     }
     
-    public void setBreak(int lineNum) {
+    public String setBreak(int lineNum) {
         //check for proper conditions (LINE BC)
+        Boolean breakSet = false;
+        String successfulLines = "";
         if (lineNum <= sourceByLine.size()-1) {
             SourceLineEntry entry = sourceByLine.get(lineNum);
             String sourceLine = entry.getLine();
             if ( okToSetBreak(sourceLine)) { //(lineNum) ) {//(sourceLine)) {
-                entry.setBreak(Boolean.TRUE);
+                breakSet = entry.setBreak(Boolean.TRUE);
                 sourceByLine.set(lineNum, entry);
                 Integer lineno = new Integer(lineNum);
-                breakTracker.add(lineno);
+                if (breakSet) {
+                    breakTracker.add(lineno);
+                    successfulLines += lineno.toString() + " ";
+                }
             } else {
                 System.out.println("ERROR: Cannot set break at line: " + lineNum);
             }
+            
         } else {
-            System.out.println("ERROR: Line is out of range. Cannot set break.");
+            System.out.println("ERROR: Line is out of range. Cannot set break at " + lineNum);
         }
+        return successfulLines;
     }
     
-    public void clearBreak(int lineNum) {
+    public Boolean clearBreak(int lineNum) {
+        Boolean success = false;
         SourceLineEntry entry = sourceByLine.get(lineNum);
         entry.setBreak(Boolean.FALSE);
         sourceByLine.set(lineNum, entry);
         Integer line = new Integer(lineNum);
         breakTracker.remove(line);
+        success = true;
+        return success;
     }
     
     public String showBreaks() {
