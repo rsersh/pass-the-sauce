@@ -1,13 +1,19 @@
+/**
+ * @author Rachel Sershon
+ * @version 05-08-2013
+ */
+
 package interpreter.debugger;
 
 //import interpreter.debugger.SymbolTable;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Set;
 
 /**
- *
- * @author Rachel Sershon
+ * Maintains a record of functions variables and values. 
+ *  
  */
 public class FunctionEnvironmentRecord {
     
@@ -17,57 +23,91 @@ public class FunctionEnvironmentRecord {
     int currentLine;
     String name;
     
-    FunctionEnvironmentRecord() {
+    public FunctionEnvironmentRecord() {
         symtab = new SymbolTable(); 
         symtab.beginScope();
-        //System.out.println(dumpFER());
     }
     
-    void setStartLine(int lineno) {
+    /**
+     * Sets the start line of the function.
+     * @param lineno - the line number
+     */
+    public void setStartLine(int lineno) {
         startLine = lineno;
     }
     
-    void setEndLine(int lineno) {
+    /**
+     * Sets the end line of the function.
+     * @param lineno - the line number
+     */
+    public void setEndLine(int lineno) {
         endLine = lineno;
     }
     
-    void setCurrentLine(int lineno) {
+    /**
+     * Sets the current line executing in the function.
+     * @param lineno - the line number
+     */
+    public void setCurrentLine(int lineno) {
         currentLine = lineno;
     }
     
-    void setFunctionName(String newName) {
+    
+    /**
+     * Sets the name of the function.
+     * @param newName - name of the function
+     */
+    public void setFunctionName(String newName) {
         name = newName;
     }
-
-    //for purposes of unit testing
-    void setFunction(String n, int start, int end) {
-        setFunctionName(n);
-        setStartLine(start);
-        setEndLine(end);
-    }
     
-    int getStartLine() {
+    /**
+     * Gets the start line of the function.
+     * @return function start line
+     */
+    public int getStartLine() {
         return startLine;
     }
     
-    int getEndLine() {
+    /**
+     * Gets the end line of the function.
+     * @return function end line
+     */
+    public int getEndLine() {
         return endLine;
     }
     
-    int getCurrentLine() {
+    /**
+     * Gets the current line executing in the function.
+     * @return current line in function
+     */
+    public int getCurrentLine() {
         return currentLine;
     }
     
-    String getName() {
+    /**
+     * Gets the name of the function.
+     * @return function name
+     */
+    public String getName() {
         return name; 
     }
     
-    void enterPair(String var, int value) {
-        symtab.put(var, value);
+    
+    /**
+     * Enters an id/offset pair into the Symbol Table.
+     * @param var  - the id
+     * @param offset  - the offset of the variable in the stack
+     */
+    public void enterPair(String var, int offset) {
+        symtab.put(var, offset);
     }
     
-    //remove the last n var/value pairs from the symbol table
-    void popPairs(int n) {
+    /**
+     * Removes the last n id/offset pairs from the Symbol Table.
+     * @param n - the number of pairs to remove from the Symbol Table
+     */
+    public void popPairs(int n) {
         symtab.endScope(n);
     }
      
@@ -92,6 +132,17 @@ public class FunctionEnvironmentRecord {
         return forprint;
     }
     
+    
+    
+    /**
+     *
+     * @return a string of id's in the Symbol Table.
+     */
+    public Set<String> getVars() {
+        return symtab.keys();
+    }
+    
+    /*
     public static void main(String args[]) {
         System.out.println("BS");
         FunctionEnvironmentRecord fer = new FunctionEnvironmentRecord();
@@ -120,7 +171,7 @@ public class FunctionEnvironmentRecord {
         fer.popPairs(1);
         
     }
-    
+    */
 }
 
 class Binder {

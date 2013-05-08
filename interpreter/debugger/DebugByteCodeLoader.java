@@ -1,3 +1,8 @@
+/**
+ * @author Rachel Sershon
+ * @version 05-08-2013
+ */
+
 package interpreter.debugger;
 
 import interpreter.CodeTable;
@@ -9,8 +14,13 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
- *
- * @author Rachel Sershon
+ * The DebugByteCodeLoader class extends the ByteCodeLoader
+ * class to include the bytecodes required for debugging. 
+ * When the bytecodes are loaded we'll get the string for 
+ * the bytecode and then we'll get the bytecode class for
+ * that string from the Codetable to construct an
+ * instance of the bytecode and then store it in the 
+ * Program object.
  */
 public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
     
@@ -39,56 +49,5 @@ public class DebugByteCodeLoader extends interpreter.ByteCodeLoader {
         }
         
         return "interpreter.bytecodes." + codeClass;
-    }
-    
-    /*
-    public Program loadCodes() {
-        sourceProgram = new Program();
-        String code;
-        StringTokenizer line;
-        ByteCode bytecode;
-        
-        try {
-            while (source.ready()) {
-                line = new StringTokenizer(source.readLine());
-                code = line.nextToken();
-                Vector<String> args = new Vector<String>();
-                while (line.hasMoreTokens()) {    
-                    args.add(line.nextToken());   
-                }
-                String codeClass = CodeTable.get(code);
-                
-                if (isDebuggerByteCode(codeClass)) {
-                  try {
-                    bytecode = 
-                     (ByteCode)(Class.forName("interpreter.bytecodes.debuggerbytecodes."
-                          +codeClass).newInstance());
-                    bytecode.init(args);
-                    sourceProgram.addCode(bytecode);
-                  } catch (Exception e) {
-                    System.out.println("ERROR : Class not found.");
-                  }  
-                }
-                
-            try {
-               bytecode = 
-                 (ByteCode)(Class.forName("interpreter.bytecodes."+codeClass).newInstance());
-               bytecode.init(args);
-               sourceProgram.addCode(bytecode);
-                
-            } catch (Exception e) {
-                System.out.println("ERROR : Class not found.");
-            }            
-          }
-        
-        } catch (IOException ex) {
-            System.out.println("ERROR: Problem with reading source. ");
-        }
-
-        sourceProgram.resolveCodes();
-        return sourceProgram;
-    }
-    */
-    
-    
+    }   
 }

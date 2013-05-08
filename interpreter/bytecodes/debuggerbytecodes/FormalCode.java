@@ -1,3 +1,7 @@
+/**
+ * @author Rachel Sershon
+ * @version 05-08-2013
+ */
 package interpreter.bytecodes.debuggerbytecodes;
 
 import interpreter.VirtualMachine;
@@ -5,8 +9,8 @@ import interpreter.debugger.DebugVM;
 import java.util.Vector;
 
 /**
- *
- * @author Rachel Sershon
+ * Instructs virtual machine to end the id and offset in stack as a pair in 
+ * the FunctionEnvironmentRecord.
  */
 public class FormalCode extends interpreter.bytecodes.ByteCode {
 
@@ -35,7 +39,7 @@ public class FormalCode extends interpreter.bytecodes.ByteCode {
 
     @Override
     public String toString() {
-        return "FORMAL " + id + " " + offset;
+        return id + " " + offset;
     }
     
 }

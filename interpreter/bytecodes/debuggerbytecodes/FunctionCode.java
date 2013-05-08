@@ -1,3 +1,7 @@
+/**
+ * @author Rachel Sershon
+ * @version 05-08-2013
+ */
 package interpreter.bytecodes.debuggerbytecodes;
 
 import interpreter.VirtualMachine;
@@ -6,8 +10,8 @@ import interpreter.debugger.FunctionEnvironmentRecord;
 import java.util.Vector;
 
 /**
- *
- * @author Rachel Sershon
+ * Instructs virtual machine to set the name, startLine, and endLine of
+ * the current function in the current FunctionEnvironmentRecord.
  */
 public class FunctionCode extends interpreter.bytecodes.ByteCode  {
 
@@ -40,7 +44,7 @@ public class FunctionCode extends interpreter.bytecodes.ByteCode  {
 
     @Override
     public String toString() {
-        return "FUNCTION " + name + ", " + startLine + ", "+ endLine;
+        return name + ", " + startLine + ", "+ endLine;
     }
     
 }

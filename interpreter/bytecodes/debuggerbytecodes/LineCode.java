@@ -1,3 +1,7 @@
+/**
+ * @author Rachel Sershon
+ * @version 05-08-2013
+ */
 package interpreter.bytecodes.debuggerbytecodes;
 
 import interpreter.VirtualMachine;
@@ -5,8 +9,8 @@ import interpreter.debugger.DebugVM;
 import java.util.Vector;
 
 /**
- *
- * @author Rachel Sershon
+ * Instructs virtual machine to set the currentLine in the FER to 
+ * the currentSourceLine.
  */
 public class LineCode extends interpreter.bytecodes.ByteCode {
 
