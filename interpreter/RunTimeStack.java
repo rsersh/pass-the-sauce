@@ -56,6 +56,15 @@ public class RunTimeStack {
     }
     
     /**
+     * Returns the value on the runStack at the given index.
+     * @param index
+     * @return the value at the requested index
+     */
+    public int valueAt(int index) {
+        return runStack.get(index);
+    }
+    
+    /**
      * Top entry is returned, but not removed.
      * @return the int at the top of the stack
      */
@@ -162,7 +171,21 @@ public class RunTimeStack {
         return runStack.size();
     }
     
+    /**
+     *
+     * @return the number of activation records on the stack
+     */
     public int framePointersNumber()  {
         return framePointers.size();
     }
+    
+
+    /**
+     * For Debug generateTraceOutput() command. 
+     * @return the start location of the last activation record
+     */
+    public int framePointerPeek() {
+        return framePointers.peek();
+    }
+
 }

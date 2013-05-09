@@ -25,9 +25,10 @@ public class DebugVM extends interpreter.VirtualMachine {
     ArrayList<Integer> breakTracker;
     ArrayList<Integer> lineCodeTracker;
     String debugCommand;
+    String codeName;
+    String traceOutput;
     Boolean stepIsPending;
     Boolean isTraceOn;
-    String codeName;
     int originalStartingLine;
     
     
@@ -96,10 +97,15 @@ public class DebugVM extends interpreter.VirtualMachine {
             
             }
             runStack.dump(); 
-            
             pc++;
         }  
+        //reset debugCommand
         debugCommand = null;
+        
+       if (isTraceOn) {
+                System.out.println(traceOutput);
+            }
+          
         System.out.println();
     }
     
@@ -178,13 +184,7 @@ public class DebugVM extends interpreter.VirtualMachine {
             } else {
                 check = false;
             }
-
-        } else if (debugCommand.equals("trace")) {
-            if (isTraceOn) {
-                
-            }
-            
-        }
+        }         
         
         return check; 
     }
@@ -226,16 +226,55 @@ public class DebugVM extends interpreter.VirtualMachine {
     }
     
    /**
-     * Sets debug command, trace flag, and executesProgram.
+     * Initiates traceOutput, sets trace flag.
      */
     public void trace() {
-        setCommand("trace");
+        //setCommand("trace");
         isTraceOn = true;
+        traceOutput = "";
         
     }
     
-    public void printCallStack() {
+    /**
+     * If traceIsOn is true then contents of traceOutput are generated.
+     * @param traceIsOn
+     */
+    public void generateTraceOutput(Boolean traceIsOn) {
+        FunctionEnvironmentRecord fer = environmentStack.peek();
+        String name = fer.getName();
+        for (int spaces = 0; spaces < environmentStack.size(); spaces++) {
+            traceOutput += " ";
+        }
         
+        if (traceIsOn) {
+            int returnValue = runStack.peek();
+            traceOutput += "exit: " + name + ": " + returnValue + "\n";
+        } else {
+            String args = "";
+            for (int i = runStack.framePointerPeek(); i < runStack.getSize(); i++) 
+              {
+                args += runStack.valueAt(i);
+                if (i != runStack.getSize()-1) {
+                    args += ", ";
+                }
+            }
+            traceOutput += name + "(" + args + ")" + "\n";
+        }
+    }
+    
+    /**
+     * Prints each function on the stack (in order of last called, first)
+     * and line number where the user is in each function.
+     */
+    public void printCallStack() {
+        String output = "";
+         
+        for (int i = environmentStack.size()-1; i > 0; i--) {
+            FunctionEnvironmentRecord fer = environmentStack.elementAt(i);
+            String name = fer.getName();
+            output += name + ": " + fer.getCurrentLine() + "\n";
+        } 
+        System.out.println(output);
     }
     
     
@@ -354,8 +393,12 @@ public class DebugVM extends interpreter.VirtualMachine {
         fer.setFunctionName(name);
         fer.setStartLine(startLine);
         fer.setEndLine(endLine);
-        //fer.setFunction(name, startLine, endLine);
         environmentStack.push(fer);
+        
+        //Check for intrinsic function - do not add to traceOutput
+        if (isTraceOn && environmentStack.peek().getStartLine() > 0) {
+            generateTraceOutput(false);
+        }
     }
     
     /**
@@ -384,6 +427,10 @@ public class DebugVM extends interpreter.VirtualMachine {
      *  Removes the last FunctionEnvironmentRecord from the environmentStack.
      */
     public void popEnvironmentEntry() {
+        //turn on tracing in exiting an intrinsic function
+        if (isTraceOn && environmentStack.peek().getStartLine() > 0) {
+            generateTraceOutput(true);
+        }
         environmentStack.pop();
     }
     

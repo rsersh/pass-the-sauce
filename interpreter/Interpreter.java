@@ -60,13 +60,10 @@ public class Interpreter {
          * Creates a VirtualMachine object to execute the program.
          */
         public void run() {
-            //Program program = bcl.loadCodes();
             if (debugSet) {
                 Program program = dbcl.loadCodes();
                 VirtualMachine vm = new DebugVM(program, sourceEntries);
-                
-                //DebugUI ui = new DebugUI();
-                //ui.promptAndProcess((DebugVM) vm);
+
                 DebugUI.promptAndProcess((DebugVM) vm);
             }
             
